@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/intro.dart';
 import 'package:flutter_application_1/pages/yes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import './pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

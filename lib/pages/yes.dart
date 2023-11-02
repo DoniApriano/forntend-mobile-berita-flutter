@@ -2,7 +2,7 @@
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/screen/page1.dart';
+import 'package:flutter_application_1/pages/screen/news_screen.dart';
 
 class Yes extends StatefulWidget {
   const Yes({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class _YesState extends State<Yes> {
   Widget build(BuildContext context) {
     List<Widget> myWidget = [
       Center(
-        child: Page1(),
+        child: NewsScreen(),
       ),
       Center(
         child: Text(
@@ -39,9 +39,9 @@ class _YesState extends State<Yes> {
         ),
       ),
     ];
+
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text("Main Activity")),
         body: myWidget[currentIndex],
         bottomNavigationBar: CurvedNavigationBar(
           animationCurve: Curves.easeOutExpo,

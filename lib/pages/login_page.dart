@@ -3,12 +3,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/register_page.dart';
 import 'package:flutter_application_1/pages/yes.dart';
 import 'package:http/http.dart';
-import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wave/config.dart';
-import 'package:wave/wave.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -20,7 +18,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  bool _obscureText = true;
 
   void login(String email, String password) async {
     final Map<String, String> headers = {
@@ -30,10 +27,9 @@ class _LoginPageState extends State<LoginPage> {
     if (!isValidEmail(email)) {
       showAlertDialog(
           context, 'Invalid Email', 'Please enter a valid email address.');
-      return; // Tidak melanjutkan permintaan HTTP jika alamat email tidak valid
+      return;
     }
 
-    // Melanjutkan dengan permintaan HTTP
     try {
       Response response = await post(
         Uri.parse('http://10.0.2.2:8000/api/auth/login'),
@@ -54,8 +50,9 @@ class _LoginPageState extends State<LoginPage> {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', data['token']);
+        prefs.setString('username', data['data']['username']);
 
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => Yes(),
@@ -189,6 +186,14 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Text("Belum punya akun?"),
                           GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RegisterPage(),
+                                ),
+                              );
+                            },
                             child: Text(
                               " Register",
                               style: TextStyle(
