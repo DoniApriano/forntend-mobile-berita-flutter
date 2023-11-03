@@ -45,7 +45,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     return prefs.getString('token');
   }
 
-  Future<void> postReport(int idReported, descriprion) async {
+  Future<void> postReport(int idReported, description, int commentId) async {
     String? token = await getToken();
     var headers = {
       'Authorization': 'Bearer $token',
@@ -56,11 +56,11 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
 
     var requestBody = {
       'reported_user_id': idReported.toString(),
-      'type': type,
-      'description': descriprion,
+      'comment_id': commentId.toString(),
+      'description': description,
     };
     var response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/report'),
+      Uri.parse('http://10.0.2.2:8000/api/reportComment'),
       headers: headers,
       body: requestBody,
     );
@@ -254,12 +254,23 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                   final id = comment.id;
 
                   return ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        "http://10.0.2.2:8000/storage/userProfilePicture/${comment.user.profilePicture}",
-                        width: 40,
-                        height: 40,
+                    leading: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                UserDetailScreen(user: comment.user),
+                          ),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(
+                          "http://10.0.2.2:8000/storage/userProfilePicture/${comment.user.profilePicture}",
+                          width: 40,
+                          height: 40,
+                        ),
                       ),
                     ),
                     title: Text(comment.text),
@@ -316,16 +327,16 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                               ListTile(
                                                 title: Text("Spam"),
                                                 onTap: () {
-                                                  postReport(
-                                                      comment.user.id, "Spam");
+                                                  postReport(comment.user.id,
+                                                      "Spam", comment.id);
                                                   Navigator.of(context).pop();
                                                 },
                                               ),
                                               ListTile(
                                                 title: Text("Abuse"),
                                                 onTap: () {
-                                                  postReport(
-                                                      comment.user.id, "Abuse");
+                                                  postReport(comment.user.id,
+                                                      "Abuse", comment.id);
                                                   Navigator.of(context)
                                                       .pop(); // Tutup AlertDialog kedua
                                                 },

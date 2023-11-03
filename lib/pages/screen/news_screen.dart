@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, avoid_print, prefer_interpolation_to_compose_strings
+// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, avoid_print, prefer_interpolation_to_compose_strings, prefer_final_fields
 
 import 'dart:convert';
 
@@ -37,6 +37,7 @@ Future fetchNews() async {
 
 class _NewsScreenState extends State<NewsScreen> {
   List<News> newsData = [];
+  TextEditingController _textSearchController = TextEditingController();
 
   Future<void> _refreshData() async {
     var newData = await fetchNews();
@@ -70,9 +71,19 @@ class _NewsScreenState extends State<NewsScreen> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: TextField(
+                    controller: _textSearchController,
                     decoration: InputDecoration(
                       labelText: "Search",
                       prefixIcon: Icon(Icons.search),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            FocusNode().unfocus();
+                          },
+                          child: Icon(Icons.send),
+                        ),
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(50),
                       ),

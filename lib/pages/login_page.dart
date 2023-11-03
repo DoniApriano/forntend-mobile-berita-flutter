@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Yes(),
+            builder: (context) => Yes(initialIndex: 0),
           ),
         );
       } else if (error['error'] == "Email tidak ditemukan") {

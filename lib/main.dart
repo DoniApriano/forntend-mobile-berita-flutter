@@ -24,7 +24,9 @@ class MyApp extends StatelessWidget {
             return CircularProgressIndicator();
           } else {
             if (snapshot.hasData) {
-              return Yes();
+              return Yes(
+                initialIndex: 0,
+              );
             } else {
               return Intro();
             }
