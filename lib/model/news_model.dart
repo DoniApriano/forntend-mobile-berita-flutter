@@ -23,7 +23,7 @@ class News {
       title: json['title'] as String? ?? "",
       newsContent: json['news_content'] as String? ?? "",
       image: json['image'] as String? ?? "",
-      created: json['created'] as String? ?? "",
+      created: json['created_at'] as String? ?? "",
       user: User.fromJson(json['user']),
     );
   }

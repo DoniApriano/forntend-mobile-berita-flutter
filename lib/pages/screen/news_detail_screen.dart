@@ -6,6 +6,7 @@ import 'package:flutter_application_1/model/news_model.dart'; // Pastikan import
 import 'package:flutter_application_1/pages/screen/user_detail_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   List<Comment> comments = [];
   TextEditingController _commentController = TextEditingController();
   String currentUsername = "";
+  DateFormat dateFormat = DateFormat('dd MMMM yyyy');
 
   @override
   void initState() {
@@ -191,7 +193,9 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                           ),
                           SizedBox(width: 10), // Spasi antara gambar dan teks
                           Text(
-                            widget.news.user.username,
+                            widget.news.user.username +
+                                dateFormat.format(DateTime.parse(
+                                    widget.news.created.substring(0, 10))),
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w400,

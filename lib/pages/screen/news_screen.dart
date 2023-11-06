@@ -212,19 +212,6 @@ class _NewsScreenState extends State<NewsScreen> {
                     );
                   }).toList(),
                 ),
-                Text("data"),
-                ElevatedButton(
-                  onPressed: () {
-                    logout();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MyApp(),
-                      ),
-                    );
-                  },
-                  child: Text("Logout"),
-                )
               ],
             ),
           );
@@ -234,8 +221,8 @@ class _NewsScreenState extends State<NewsScreen> {
   }
 }
 
-Future<void> logout() async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.remove('token');
-  await prefs.remove('username');
-}
+// Future<void> logout() async {
+//   final prefs = await SharedPreferences.getInstance();
+//   await prefs.remove('token');
+//   await prefs.remove('username');
+// }

@@ -44,9 +44,6 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
-        print(data['token']);
-        print(data['data']['username']);
-        print('Login successfully');
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', data['token']);

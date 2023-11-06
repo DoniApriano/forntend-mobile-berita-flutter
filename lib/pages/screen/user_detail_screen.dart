@@ -120,11 +120,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       var data = json.decode(response.body.toString());
       setState(() {
         countFollowers = data['data']['count'];
-        print("follower s${countFollowers}");
       });
-      for (var i = 0; i < data['data']['followers'].length; i++) {
-        print(data['data']['followers'][i]['followers']['username']);
-      }
+      // for (var i = 0; i < data['data']['followers'].length; i++) {
+      //   print(data['data']['followers'][i]['followers']['username']);
+      // }
     } else {
       print("status code = ${response.statusCode}");
     }
