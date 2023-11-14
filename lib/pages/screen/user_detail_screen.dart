@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/user_model.dart';
 import 'package:flutter_application_1/pages/screen/user_me_detail_screen.dart';
-import 'package:flutter_application_1/pages/yes.dart';
+import 'package:flutter_application_1/pages/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,6 +20,7 @@ class UserDetailScreen extends StatefulWidget {
 
 class _UserDetailScreenState extends State<UserDetailScreen> {
   var countFollowers = 0;
+  var countFollowing = 0;
   var isFollowing = false;
   String currentUsername = "";
   bool isButtonVisible = true;
@@ -129,11 +130,32 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     }
   }
 
+  Future<void> fetchUserFollowing() async {
+    String? token = await getToken();
+    var headers = {
+      'Authorization': 'Bearer $token',
+    };
+    var response = await http.get(
+      Uri.parse('http://10.0.2.2:8000/api/showFollowing/${widget.user.id}'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body.toString());
+      setState(() {
+        countFollowing = data['data']['count'];
+      });
+    } else {
+      print("status code = ${response.statusCode}");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getCurrentUsername();
     fetchUserFollowers();
+    fetchUserFollowing();
     checkIfFollowing();
   }
 
@@ -183,7 +205,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                           ),
                         ),
                         Text(
-                          countFollowers.toString(),
+                          countFollowing.toString(),
                           style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w500,

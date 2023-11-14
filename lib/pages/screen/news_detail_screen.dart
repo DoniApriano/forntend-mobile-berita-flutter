@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, prefer_final_fields, library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, unnecessary_brace_in_string_interps, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, avoid_print, prefer_final_fields, library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, unnecessary_brace_in_string_interps, prefer_interpolation_to_compose_strings, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/comment_model.dart';
@@ -154,73 +154,112 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              "http://10.0.2.2:8000/storage/newsImage/${widget.news.image}",
-              fit: BoxFit.cover,
-            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              UserDetailScreen(user: widget.news.user),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  "http://10.0.2.2:8000/storage/userProfilePicture/" +
-                                      widget.news.user.profilePicture,
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 10), // Spasi antara gambar dan teks
-                          Text(
-                            widget.news.user.username +
-                                dateFormat.format(DateTime.parse(
-                                    widget.news.created.substring(0, 10))),
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        Text(
-                          widget.news.title,
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            widget.news.title,
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                        Text(
-                          widget.news.newsContent,
-                          style: TextStyle(fontSize: 16.0),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    UserDetailScreen(user: widget.news.user),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                            "http://10.0.2.2:8000/storage/userProfilePicture/" +
+                                                widget.news.user.profilePicture,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            10), // Spasi antara gambar dan teks
+                                    Text(
+                                      widget.news.user.username,
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w400,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      dateFormat.format(DateTime.parse(widget
+                                          .news.created
+                                          .substring(0, 10))),
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w400,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 410,
+                          height: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                "http://10.0.2.2:8000/storage/newsImage/" +
+                                    widget.news.image,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20, left: 8, right: 8, bottom: 15),
+                          child: Text(
+                            widget.news.newsContent,
+                            textAlign: TextAlign.justify,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
                         ),
                       ],
                     ),

@@ -1,6 +1,7 @@
-// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors
+// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/colors/custom_color.dart';
 import 'package:flutter_application_1/pages/login_page.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:lottie/lottie.dart';
@@ -13,9 +14,12 @@ class Intro extends StatefulWidget {
 }
 
 class _IntroState extends State<Intro> {
+  CustomColor customColor = CustomColor();
+
   @override
   Widget build(BuildContext context) {
     return IntroductionScreen(
+      globalBackgroundColor: customColor.light,
       pages: [
         PageViewModel(
           title: "Selamat datang di Pawarta",

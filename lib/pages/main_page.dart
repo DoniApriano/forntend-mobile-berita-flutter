@@ -2,24 +2,25 @@
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/colors/custom_color.dart';
+import 'package:flutter_application_1/pages/screen/news_follows_screen.dart';
 import 'package:flutter_application_1/pages/screen/news_screen.dart';
 import 'package:flutter_application_1/pages/screen/user_me_detail_screen.dart';
 
-class Yes extends StatefulWidget {
-  final int initialIndex;
-  const Yes({Key? key, required this.initialIndex}) : super(key: key);
+class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
 
   @override
-  State<Yes> createState() => _YesState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _YesState extends State<Yes> {
+class _MainPageState extends State<MainPage> {
   int currentIndex = 0;
+  CustomColor customColor = CustomColor();
 
   @override
   void initState() {
     super.initState();
-    currentIndex = widget.initialIndex;
   }
 
   @override
@@ -28,12 +29,7 @@ class _YesState extends State<Yes> {
       Center(
         child: NewsScreen(),
       ),
-      Center(
-        child: Text(
-          "Halaman 2",
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
+      NewsFollowsScreen(),
       Center(
         child: Text(
           "Halaman 3",
@@ -48,25 +44,25 @@ class _YesState extends State<Yes> {
         body: myWidget[currentIndex],
         bottomNavigationBar: CurvedNavigationBar(
           animationCurve: Curves.easeOutExpo,
-          backgroundColor: Colors.transparent,
+          backgroundColor: customColor.light,
           items: [
             Icon(
-              Icons.home_filled,
+              Icons.home_outlined,
               size: 30,
               color: Colors.white,
             ),
             Icon(
-              Icons.follow_the_signs_rounded,
+              Icons.explore_outlined,
               size: 30,
               color: Colors.white,
             ),
             Icon(
-              Icons.notifications,
+              Icons.notifications_outlined,
               size: 30,
               color: Colors.white,
             ),
             Icon(
-              Icons.person,
+              Icons.person_outline,
               size: 30,
               color: Colors.white,
             ),
@@ -77,7 +73,7 @@ class _YesState extends State<Yes> {
             });
           },
           index: currentIndex,
-          color: Colors.blue,
+          color: Color.fromRGBO(105, 108, 255, 1),
         ),
       ),
     );

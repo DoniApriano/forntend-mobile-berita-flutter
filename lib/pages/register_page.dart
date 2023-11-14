@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/colors/custom_color.dart';
 import 'package:flutter_application_1/pages/login_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -19,6 +20,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
   File? image;
+
+  CustomColor customColor = CustomColor();
 
   Future<void> registerUser() async {
     final username = usernameController.text;
@@ -111,14 +114,18 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.grey[100],
+        color: customColor.grey,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 "Silahkan melakukan Register",
-                style: TextStyle(fontWeight: FontWeight.w300, fontSize: 30),
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 30,
+                  color: customColor.dark,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -134,7 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ? Container(
                                 width: 200,
                                 height: 200,
-                                color: Colors.grey,
+                                color: customColor.purple,
                                 child: Icon(
                                   Icons.add_a_photo,
                                   color: Colors.white,
@@ -166,8 +173,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: TextFormField(
                           controller: usernameController,
                           decoration: InputDecoration(
-                            border: InputBorder.none,
                             label: Text("Username"),
+                            border: InputBorder.none,
+                            labelStyle: TextStyle(
+                              color: customColor.purple,
+                            ),
+                            prefixIconColor: customColor.purple,
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                         ),
@@ -190,8 +201,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: TextFormField(
                           controller: emailController,
                           decoration: InputDecoration(
-                            border: InputBorder.none,
                             label: Text("Email"),
+                            border: InputBorder.none,
+                            labelStyle: TextStyle(
+                              color: customColor.purple,
+                            ),
+                            prefixIconColor: customColor.purple,
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                         ),
@@ -200,60 +215,68 @@ class _RegisterPageState extends State<RegisterPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 15),
                       child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 2,
-                                offset: Offset.zero,
-                                color: const Color.fromARGB(255, 207, 207, 207),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                obscureText: true,
-                                controller: passwordController,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  prefixIcon: Icon(Icons.lock_clock_outlined),
-                                  disabledBorder: InputBorder.none,
-                                  label: Text("Kata sandi"),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 2,
+                              offset: Offset.zero,
+                              color: const Color.fromARGB(255, 207, 207, 207),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              obscureText: true,
+                              controller: passwordController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                labelStyle: TextStyle(
+                                  color: customColor.purple,
                                 ),
+                                prefixIconColor: customColor.purple,
+                                label: Text("Kata sandi"),
+                                prefixIcon: Icon(Icons.lock_clock_outlined),
                               ),
-                            ],
-                          )),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 15),
                       child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 2,
-                                offset: Offset.zero,
-                                color: const Color.fromARGB(255, 207, 207, 207),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                obscureText: true,
-                                controller: confirmPasswordController,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  prefixIcon: Icon(Icons.lock_clock_outlined),
-                                  disabledBorder: InputBorder.none,
-                                  label: Text("Konfirmasi Kata Sandi"),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 2,
+                              offset: Offset.zero,
+                              color: const Color.fromARGB(255, 207, 207, 207),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              obscureText: true,
+                              controller: confirmPasswordController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                labelStyle: TextStyle(
+                                  color: customColor.purple,
                                 ),
+                                prefixIconColor: customColor.purple,
+                                label: Text("Konfirmasi Kata Sandi"),
+                                prefixIcon: Icon(Icons.lock_clock_outlined),
                               ),
-                            ],
-                          )),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     SizedBox(
                       height: 55,
@@ -264,6 +287,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                         style: ButtonStyle(
                           elevation: MaterialStatePropertyAll(10),
+                          backgroundColor:
+                              MaterialStateProperty.all(customColor.purple),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,

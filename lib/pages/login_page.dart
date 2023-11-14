@@ -3,8 +3,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/colors/custom_color.dart';
 import 'package:flutter_application_1/pages/register_page.dart';
-import 'package:flutter_application_1/pages/yes.dart';
+import 'package:flutter_application_1/pages/main_page.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  CustomColor customColor = CustomColor();
 
   void login(String email, String password) async {
     final Map<String, String> headers = {
@@ -52,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Yes(initialIndex: 0),
+            builder: (context) => MainPage(),
           ),
         );
       } else if (error['error'] == "Email tidak ditemukan") {
@@ -75,134 +77,172 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.grey[100],
+        color: customColor.light,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Selamat Datang",
-                style: TextStyle(fontWeight: FontWeight.w300, fontSize: 30),
-              ),
-              SizedBox(
-                height: 40,
-              ),
               Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 15),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 2,
-                              offset: Offset.zero,
-                              color: const Color.fromARGB(255, 207, 207, 207),
-                            ),
-                          ],
-                        ),
-                        child: TextFormField(
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            label: Text("Email"),
-                            prefixIcon: Icon(Icons.person_outline),
-                          ),
+                padding: const EdgeInsets.all(15.0),
+                child: Container(
+                  padding: EdgeInsets.only(top: 30, bottom: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 15,
+                        offset: Offset(0, 15),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Selamat Datang",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 30,
+                          color: customColor.dark,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 20),
-                      child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 2,
-                                offset: Offset.zero,
-                                color: const Color.fromARGB(255, 207, 207, 207),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                obscureText: true,
-                                controller: passwordController,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  prefixIcon: Icon(Icons.lock_clock_outlined),
-                                  disabledBorder: InputBorder.none,
-                                  label: Text("Password"),
-                                ),
-                              ),
-                            ],
-                          )),
-                    ),
-                    SizedBox(
-                      height: 55,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          login(
-                            emailController.text.toString(),
-                            passwordController.text.toString(),
-                          );
-                        },
-                        style: ButtonStyle(
-                          elevation: MaterialStatePropertyAll(10),
-                        ),
-                        child: Row(
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.login_outlined),
                             Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                "Masuk",
-                                style: TextStyle(fontSize: 20),
+                              padding: const EdgeInsets.only(bottom: 15),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 2,
+                                      offset: Offset.zero,
+                                      color: const Color.fromARGB(
+                                          255, 207, 207, 207),
+                                    ),
+                                  ],
+                                ),
+                                child: TextFormField(
+                                  controller: emailController,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    label: Text("Email"),
+                                    labelStyle: TextStyle(
+                                      color: customColor.purple,
+                                    ),
+                                    prefixIconColor: customColor.purple,
+                                    prefixIcon: Icon(Icons.person_outline),
+                                  ),
+                                ),
                               ),
                             ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 10, bottom: 20),
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        blurRadius: 2,
+                                        offset: Offset.zero,
+                                        color: const Color.fromARGB(
+                                            255, 207, 207, 207),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      TextFormField(
+                                        obscureText: true,
+                                        controller: passwordController,
+                                        decoration: InputDecoration(
+                                          label: Text("Kata Sandi"),
+                                          border: InputBorder.none,
+                                          labelStyle: TextStyle(
+                                            color: customColor.purple,
+                                          ),
+                                          prefixIconColor: customColor.purple,
+                                          prefixIcon:
+                                              Icon(Icons.lock_clock_outlined),
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            SizedBox(
+                              height: 55,
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  login(
+                                    emailController.text.toString(),
+                                    passwordController.text.toString(),
+                                  );
+                                },
+                                style: ButtonStyle(
+                                    elevation: MaterialStatePropertyAll(10),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        customColor.purple)),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.login_outlined),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        "Masuk",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Belum punya akun?"),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => RegisterPage(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      " Register",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: customColor.purple,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Belum punya akun?"),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterPage(),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              " Register",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.blue,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],

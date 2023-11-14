@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/intro.dart';
-import 'package:flutter_application_1/pages/yes.dart';
+import 'package:flutter_application_1/pages/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -24,9 +24,7 @@ class MyApp extends StatelessWidget {
             return CircularProgressIndicator();
           } else {
             if (snapshot.hasData) {
-              return Yes(
-                initialIndex: 0,
-              );
+              return MainPage();
             } else {
               return Intro();
             }
@@ -41,3 +39,8 @@ class MyApp extends StatelessWidget {
     return prefs.getString('token');
   }
 }
+// Future<void> logout() async {
+//   final prefs = await SharedPreferences.getInstance();
+//   await prefs.remove('token');
+//   await prefs.remove('username');
+// }
