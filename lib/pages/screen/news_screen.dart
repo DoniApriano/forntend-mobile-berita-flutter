@@ -78,7 +78,6 @@ class _NewsScreenState extends State<NewsScreen> {
           });
         }
       } else {
-        print("hai ${response.body}");
         throw Exception("Failed to fetch news data");
       }
     } on Exception catch (e) {
@@ -130,48 +129,34 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(245, 245, 249, 1),
+      appBar: AppBar(
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "Pawarta",
+            style: TextStyle(
+              fontSize: 30,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.notifications_outlined,
+                color: Colors.black,
+              ))
+        ],
+      ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 20,
-                  right: 15,
-                  left: 15,
-                  bottom: 0,
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 2,
-                        offset: Offset.zero,
-                        color: const Color.fromARGB(255, 207, 207, 207),
-                      ),
-                    ],
-                  ),
-                  child: TextFormField(
-                    cursorHeight: 20,
-                    controller: _textSearchController,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      label: Text("Cari Berita ..."),
-                      labelStyle: TextStyle(
-                        color: customColor.purple,
-                      ),
-                      prefixIconColor: customColor.purple,
-                      prefixIcon: Icon(Icons.search),
-                      suffixIconColor: customColor.purple,
-                      suffixIcon: Icon(Icons.send_sharp),
-                    ),
-                  ),
-                ),
-              ),
               buildNewsColumn(newsData, _textSearchController),
               buildCategoryList(categories),
             ],
@@ -214,7 +199,6 @@ class _NewsScreenState extends State<NewsScreen> {
                         );
                       },
                       child: Container(
-                        width: 370,
                         margin: EdgeInsets.symmetric(horizontal: 0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
@@ -226,81 +210,71 @@ class _NewsScreenState extends State<NewsScreen> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              bottom: 10.0,
-                              left: 10.0,
-                              child: Container(
-                                padding: EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                UserDetailScreen(
-                                                    user: news.user),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            gradient: LinearGradient(
+                              colors: [Colors.transparent, Colors.black],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                bottom: 10.0,
+                                left: 10.0,
+                                child: Container(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Text(
+                                          news.title,
+                                          style: TextStyle(
+                                            fontSize: 20.0,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 40,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    "http://10.0.2.2:8000/storage/userProfilePicture/" +
-                                                        news.user
-                                                            .profilePicture,
-                                                  ),
-                                                  fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UserDetailScreen(
+                                                      user: news.user),
+                                            ),
+                                          );
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                news.user.username,
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontStyle: FontStyle.italic,
                                                 ),
                                               ),
-                                            ),
-                                            SizedBox(width: 10),
-                                            Text(
-                                              news.user.username,
-                                              style: TextStyle(
-                                                color: customColor.dark,
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.w500,
-                                                fontStyle: FontStyle.italic,
-                                              ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        news.title,
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          color: customColor.dark,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -334,11 +308,8 @@ class _NewsScreenState extends State<NewsScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
                             category.name,
                             style: TextStyle(
@@ -364,10 +335,19 @@ class _NewsScreenState extends State<NewsScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Container(
-                            padding: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(15),
                             decoration: BoxDecoration(
                               color: customColor.purple,
                               borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 3,
+                                  spreadRadius: 2,
+                                  offset: Offset.fromDirection(-10, 5),
+                                  color:
+                                      const Color.fromARGB(255, 207, 207, 207),
+                                ),
+                              ],
                             ),
                             child: Text(
                               "Lihat Semua",
@@ -411,6 +391,14 @@ class _NewsScreenState extends State<NewsScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 3,
+                        spreadRadius: 2,
+                        offset: Offset.fromDirection(-10, 5),
+                        color: const Color.fromARGB(255, 207, 207, 207),
+                      ),
+                    ],
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

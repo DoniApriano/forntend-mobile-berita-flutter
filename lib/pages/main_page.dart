@@ -6,6 +6,7 @@ import 'package:flutter_application_1/colors/custom_color.dart';
 import 'package:flutter_application_1/pages/screen/news_follows_screen.dart';
 import 'package:flutter_application_1/pages/screen/news_screen.dart';
 import 'package:flutter_application_1/pages/screen/user_me_detail_screen.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -42,38 +43,40 @@ class _MainPageState extends State<MainPage> {
     return MaterialApp(
       home: Scaffold(
         body: myWidget[currentIndex],
-        bottomNavigationBar: CurvedNavigationBar(
-          animationCurve: Curves.easeOutExpo,
-          backgroundColor: customColor.light,
-          items: [
-            Icon(
-              Icons.home_outlined,
-              size: 30,
-              color: Colors.white,
-            ),
-            Icon(
-              Icons.explore_outlined,
-              size: 30,
-              color: Colors.white,
-            ),
-            Icon(
-              Icons.notifications_outlined,
-              size: 30,
-              color: Colors.white,
-            ),
-            Icon(
-              Icons.person_outline,
-              size: 30,
-              color: Colors.white,
-            ),
-          ],
-          onTap: (int i) {
-            setState(() {
-              currentIndex = i;
-            });
-          },
-          index: currentIndex,
-          color: Color.fromRGBO(105, 108, 255, 1),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: GNav(
+            tabBorderRadius: 50,
+            haptic: true,
+            tabBackgroundColor: Colors.black,
+            activeColor: Colors.white,
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            tabMargin:
+                EdgeInsets.only(top: 10, bottom: 20, left: 10, right: 10),
+            onTabChange: (value) {
+              setState(() {
+                currentIndex = value;
+              });
+            },
+            tabs: [
+              GButton(
+                icon: Icons.home,
+                text: 'Home',
+              ),
+              GButton(
+                icon: Icons.heart_broken,
+                text: 'Likes',
+              ),
+              GButton(
+                icon: Icons.search,
+                text: 'Search',
+              ),
+              GButton(
+                icon: Icons.person,
+                text: 'Profile',
+              )
+            ],
+          ),
         ),
       ),
     );

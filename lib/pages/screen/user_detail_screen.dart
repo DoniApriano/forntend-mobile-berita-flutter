@@ -55,7 +55,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
     if (response.statusCode == 200) {
       var data = json.decode(response.body.toString());
-      print(data['message']);
       setState(() {
         isFollowing = false;
         countFollowers -= 1;
@@ -79,7 +78,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
     if (response.statusCode == 200) {
       var data = json.decode(response.body.toString());
-      print(data['message']);
       setState(() {
         isFollowing = true;
         countFollowers += 1;
@@ -99,7 +97,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
     if (response.statusCode == 200) {
       var data = json.decode(response.body.toString());
-      print(data);
       bool followingStatus = data['status'];
       setState(() {
         isFollowing = followingStatus;

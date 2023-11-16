@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, avoid_print
+// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, avoid_print, prefer_interpolation_to_compose_strings
 
 import 'dart:convert';
 
@@ -44,8 +44,8 @@ class _NewsFollowsScreenState extends State<NewsFollowsScreen> {
       if (response.statusCode == 200) {
         var data = json.decode(response.body.toString());
         setState(() {
-          newsData = List<News>.from(
-              data['data'][0].map((json) => News.fromJson(json)));
+          newsData =
+              List<News>.from(data['data'].map((json) => News.fromJson(json)));
           isLoading = false;
         });
       }
@@ -67,113 +67,157 @@ class _NewsFollowsScreenState extends State<NewsFollowsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        key: _refreshIndicatorKey,
-        onRefresh: _refresh,
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: newsData.length,
-            itemBuilder: (context, index) {
-              final news = newsData[index];
-              if (isLoading) {
-                return CircularProgressIndicator();
-              } else {
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      NewsDetailScreen(news: news),
-                                ),
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 200,
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        "http://10.0.2.2:8000/storage/newsImage/" +
-                                            news.image,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
+      body: SingleChildScrollView(
+        child: RefreshIndicator(
+          key: _refreshIndicatorKey,
+          onRefresh: _refresh,
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: newsData.length,
+              itemBuilder: (context, index) {
+                final news = newsData[index];
+                if (isLoading) {
+                  return CircularProgressIndicator();
+                } else {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                blurRadius: 3,
+                                spreadRadius: 2,
+                                offset: Offset.fromDirection(-10, 5),
+                                color: const Color.fromARGB(255, 207, 207, 207),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        NewsDetailScreen(news: news),
                                   ),
-                                ),
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    UserDetailScreen(
-                                                        user: news.user),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 410,
+                                        height: 260,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                              "http://10.0.2.2:8000/storage/newsImage/" +
+                                                  news.image,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                          vertical: 10,
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              news.title,
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                color: customColor.dark,
                                               ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return UserDetailScreen(
+                                              user: news.user,
                                             );
                                           },
-                                          child: Text(
-                                            news.user.username,
-                                            style: TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                              fontWeight: FontWeight.w500,
-                                              color: customColor.dark,
+                                        ),
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 5,
+                                        vertical: 5,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 25,
+                                            height: 25,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                  "http://10.0.2.2:8000/storage/userProfilePicture/" +
+                                                      news.user.profilePicture,
+                                                ),
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Text(
-                                          news.title,
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                            color: customColor.dark,
+                                          SizedBox(width: 10),
+                                          Text(
+                                            news.user.username,
+                                            style: TextStyle(
+                                              color: customColor.dark,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500,
+                                              fontStyle: FontStyle.italic,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          news.newsContent,
-                                          style: TextStyle(),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              }
-            },
+                    ],
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),
