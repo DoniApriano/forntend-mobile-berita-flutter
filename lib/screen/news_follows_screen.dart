@@ -5,8 +5,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/colors/custom_color.dart';
 import 'package:flutter_application_1/model/news_model.dart';
-import 'package:flutter_application_1/pages/screen/news_detail_screen.dart';
-import 'package:flutter_application_1/pages/screen/user_detail_screen.dart';
+import 'package:flutter_application_1/screen/news_detail_screen.dart';
+import 'package:flutter_application_1/screen/user_detail_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -67,6 +67,19 @@ class _NewsFollowsScreenState extends State<NewsFollowsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.search_outlined,
+              color: Colors.black,
+            ),
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: RefreshIndicator(
           key: _refreshIndicatorKey,

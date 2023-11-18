@@ -3,9 +3,10 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/colors/custom_color.dart';
-import 'package:flutter_application_1/pages/screen/news_follows_screen.dart';
-import 'package:flutter_application_1/pages/screen/news_screen.dart';
-import 'package:flutter_application_1/pages/screen/user_me_detail_screen.dart';
+import 'package:flutter_application_1/screen/explore_screen.dart';
+import 'package:flutter_application_1/screen/news_follows_screen.dart';
+import 'package:flutter_application_1/screen/news_screen.dart';
+import 'package:flutter_application_1/screen/user_me_detail_screen.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class MainPage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _MainPageState extends State<MainPage> {
       Center(
         child: NewsScreen(),
       ),
-      NewsFollowsScreen(),
+      ExploreScreen(),
       Center(
         child: Text(
           "Halaman 3",
@@ -64,12 +65,12 @@ class _MainPageState extends State<MainPage> {
                 text: 'Home',
               ),
               GButton(
-                icon: Icons.heart_broken,
-                text: 'Likes',
-              ),
-              GButton(
                 icon: Icons.search,
                 text: 'Search',
+              ),
+              GButton(
+                icon: Icons.heart_broken,
+                text: 'Likes',
               ),
               GButton(
                 icon: Icons.person,

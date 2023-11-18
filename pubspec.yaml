@@ -30,7 +30,10 @@ environment:
 dependencies:
     flutter:
         sdk: flutter
+
+    provider: ^6.1.1
     google_nav_bar: ^5.0.6
+    timeago: ^3.0.2
     introduction_screen: ^3.1.12
     lottie: ^2.7.0
     # convex_bottom_bar: ^3.2.0

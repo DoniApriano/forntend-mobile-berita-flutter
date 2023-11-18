@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/user_model.dart';
-import 'package:flutter_application_1/pages/screen/user_me_detail_screen.dart';
+import 'package:flutter_application_1/screen/user_me_detail_screen.dart';
 import 'package:flutter_application_1/pages/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;

@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/colors/custom_color.dart';
 import 'package:flutter_application_1/model/category_model.dart';
 import 'package:flutter_application_1/model/news_model.dart';
-import 'package:flutter_application_1/pages/screen/news_detail_screen.dart';
-import 'package:flutter_application_1/pages/screen/user_detail_screen.dart';
+import 'package:flutter_application_1/screen/news_detail_screen.dart';
+import 'package:flutter_application_1/screen/user_detail_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 

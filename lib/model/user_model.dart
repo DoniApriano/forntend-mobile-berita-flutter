@@ -1,10 +1,10 @@
-// ignore_for_file: unnecessary_cast
+// ignore_for_file: unnecessary_cast, unnecessary_this
 
 class User {
-  final int id;
-  final String username;
-  final String profilePicture;
-  final String email;
+  int id;
+  String username;
+  String profilePicture;
+  String email;
 
   User({
     required this.id,
@@ -12,6 +12,18 @@ class User {
     required this.profilePicture,
     required this.email,
   });
+
+  set setUsername(String newUsername) {
+    this.username = newUsername;
+  }
+
+  set setProfilePicture(String newProfilePicture) {
+    this.profilePicture = newProfilePicture;
+  }
+
+  set setEmail(String newEmail) {
+    this.email = newEmail;
+  }
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
