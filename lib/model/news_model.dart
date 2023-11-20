@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter_application_1/model/category_model.dart';
 import 'package:flutter_application_1/model/user_model.dart';
+
+List<News> newsFromJson(String str) =>
+    List<News>.from(json.decode(str).map((x) => News.fromJson(x)));
 
 class News {
   final int id;

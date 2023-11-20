@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', data['token']);
-        prefs.setString('username', data['data']['username']);
+        prefs.setString('email', data['data']['email']);
 
         Navigator.pushReplacement(
           context,

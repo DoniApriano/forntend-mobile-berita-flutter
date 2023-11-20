@@ -22,7 +22,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   var countFollowers = 0;
   var countFollowing = 0;
   var isFollowing = false;
-  String currentUsername = "";
+  String currentEmail = "";
   bool isButtonVisible = true;
 
   Future<String?> getToken() async {
@@ -30,12 +30,12 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     return prefs.getString('token');
   }
 
-  Future<void> getCurrentUsername() async {
+  Future<void> getCurrentEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      currentUsername = prefs.getString('username') ?? "";
+      currentEmail = prefs.getString('email') ?? "";
     });
-    if (widget.user.username == currentUsername) {
+    if (widget.user.email == currentEmail) {
       setState(() {
         isButtonVisible = false;
       });
@@ -150,75 +150,85 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   void initState() {
     super.initState();
-    getCurrentUsername();
-    fetchUserFollowers();
+    getCurrentEmail();
     fetchUserFollowing();
+    fetchUserFollowers();
     checkIfFollowing();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Center(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(200),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          "http://10.0.2.2:8000/storage/userProfilePicture/" +
-                              widget.user.profilePicture),
-                      fit: BoxFit.cover,
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            "",
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        body: Container(
+          child: Center(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(200),
+                      image: DecorationImage(
+                        image: NetworkImage(
+                            "http://10.0.2.2:8000/storage/userProfilePicture/" +
+                                widget.user.profilePicture),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Text(
-                widget.user.username,
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          "Following",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        Text(
-                          countFollowing.toString(),
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+                Text(
+                  widget.user.username,
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w500,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: () {},
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey.shade200,
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 3,
+                            spreadRadius: 2,
+                            offset: Offset.fromDirection(-10, 5),
+                            color: const Color.fromARGB(255, 207, 207, 207),
+                          ),
+                        ],
+                      ),
                       child: Column(
                         children: [
                           Text(
-                            "Followers",
+                            "Mengikuti",
                             style: TextStyle(
                               fontSize: 15,
                               fontStyle: FontStyle.italic,
@@ -226,7 +236,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                             ),
                           ),
                           Text(
-                            countFollowers.toString(),
+                            countFollowing.toString(),
                             style: TextStyle(
                               fontSize: 30,
                               fontWeight: FontWeight.w500,
@@ -235,31 +245,74 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Center(
-                child: Visibility(
-                  visible:
-                      isButtonVisible, // Tentukan apakah tombol harus ditampilkan
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (isFollowing) {
-                        unFollow(widget.user.id);
-                      } else {
-                        follow(widget.user.id);
-                      }
-                    },
-                    child: Text(isFollowing ? "Unfollow" : "Follow"),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                        isFollowing ? Colors.grey : Colors.blue,
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey.shade200,
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 3,
+                            spreadRadius: 2,
+                            offset: Offset.fromDirection(-10, 5),
+                            color: const Color.fromARGB(255, 207, 207, 207),
+                          ),
+                        ],
+                      ),
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Column(
+                          children: [
+                            Text(
+                              "Pengikut",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            Text(
+                              countFollowers.toString(),
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Center(
+                  child: Visibility(
+                    visible:
+                        isButtonVisible, // Tentukan apakah tombol harus ditampilkan
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (isFollowing) {
+                          unFollow(widget.user.id);
+                        } else {
+                          follow(widget.user.id);
+                        }
+                      },
+                      child: Text(isFollowing ? "Unfollow" : "Follow"),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          isFollowing ? Colors.grey : Colors.blue,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

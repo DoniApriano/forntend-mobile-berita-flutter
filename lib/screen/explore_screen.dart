@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/category_model.dart';
 import 'package:flutter_application_1/model/news_model.dart';
 import 'package:flutter_application_1/screen/news_detail_screen.dart';
+import 'package:flutter_application_1/screen/search_result_screen.dart';
+import 'package:flutter_application_1/screen/search_screen.dart';
 import 'package:flutter_application_1/screen/user_detail_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -82,7 +84,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   void createTabs() {
-    // Add a tab for "Semua Berita" (All News)
     tabs.add(Tab(text: 'Semua Berita'));
 
     // Add tabs for each category
@@ -129,6 +130,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       home: DefaultTabController(
         length: tabs.length,
         child: Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
             centerTitle: true,
             title: Text(
@@ -141,7 +143,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
             elevation: 0,
             actions: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  showSearch(context: context, delegate: SearchResult());
+                },
                 icon: Icon(
                   Icons.search_rounded,
                   color: Colors.black,

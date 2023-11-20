@@ -23,7 +23,6 @@ class NewsScreen extends StatefulWidget {
 class _NewsScreenState extends State<NewsScreen> {
   List<News> newsData = [];
   List<News> newsFollowsData = [];
-  TextEditingController _textSearchController = TextEditingController();
   bool isLoading = true;
   CustomColor customColor = CustomColor();
   FocusNode focusNode = FocusNode();
@@ -91,7 +90,6 @@ class _NewsScreenState extends State<NewsScreen> {
 
   @override
   void dispose() {
-    _textSearchController.dispose();
     super.dispose();
   }
 
@@ -125,7 +123,7 @@ class _NewsScreenState extends State<NewsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildNews(newsData, _textSearchController),
+              buildNews(newsData),
               SizedBox(
                 height: 30,
               ),
@@ -279,8 +277,7 @@ class _NewsScreenState extends State<NewsScreen> {
     );
   }
 
-  Widget buildNews(
-      List<News> newsData, TextEditingController textSearchController) {
+  Widget buildNews(List<News> newsData) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

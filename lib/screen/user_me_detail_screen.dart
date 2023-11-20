@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/user_model.dart';
 import 'package:flutter_application_1/screen/user_change_password.dart';
 import 'package:flutter_application_1/screen/user_detail_screen.dart';
+import 'package:flutter_application_1/screen/user_update_profile_screeen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -48,6 +49,7 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
       var data = json.decode(response.body.toString());
       setState(() {
         user.username = data['data']['username'].toString();
+        user.id = data['data']['id'];
         user.email = data['data']['email'].toString();
         user.profilePicture = data['data']['profile_picture'].toString();
       });
@@ -160,7 +162,7 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
                                 },
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStatePropertyAll(
-                                    Colors.white,
+                                    Colors.black,
                                   ),
                                 ),
                                 child: Row(
@@ -172,14 +174,14 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
                                       child: Text(
                                         "Lihat Detail",
                                         style: TextStyle(
-                                          color: Colors.black,
+                                          color: Colors.white,
                                         ),
                                         textAlign: TextAlign.left,
                                       ),
                                     ),
                                     Icon(
                                       Icons.keyboard_arrow_right_rounded,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                     )
                                   ],
                                 ),
@@ -214,7 +216,7 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    UserChangePassword(user: user),
+                                    UserUpdateProfileScreeen(user: user),
                               ),
                             );
                           },
@@ -223,7 +225,7 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
                             minimumSize: MaterialStateProperty.all(
                                 Size(double.infinity, 50)),
                             backgroundColor:
-                                MaterialStatePropertyAll(Colors.white),
+                                MaterialStatePropertyAll(Colors.black),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -233,14 +235,14 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
                                 child: Text(
                                   "Ubah Profil",
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   ),
                                   textAlign: TextAlign.left,
                                 ),
                               ),
                               Icon(
                                 Icons.keyboard_arrow_right_rounded,
-                                color: Colors.black,
+                                color: Colors.white,
                               )
                             ],
                           ),
@@ -263,7 +265,7 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
                             minimumSize: MaterialStateProperty.all(
                                 Size(double.infinity, 50)),
                             backgroundColor:
-                                MaterialStatePropertyAll(Colors.white),
+                                MaterialStatePropertyAll(Colors.black),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,14 +275,14 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
                                 child: Text(
                                   "Ubah Kata Sandi",
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   ),
                                   textAlign: TextAlign.left,
                                 ),
                               ),
                               Icon(
                                 Icons.keyboard_arrow_right_rounded,
-                                color: Colors.black,
+                                color: Colors.white,
                               )
                             ],
                           ),

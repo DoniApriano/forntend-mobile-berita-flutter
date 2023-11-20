@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/colors/custom_color.dart';
 import 'package:flutter_application_1/model/comment_model.dart';
-import 'package:flutter_application_1/model/news_model.dart'; 
+import 'package:flutter_application_1/model/news_model.dart';
 import 'package:flutter_application_1/screen/user_detail_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -24,7 +24,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   bool isLoading = true;
   List<Comment> comments = [];
   TextEditingController _commentController = TextEditingController();
-  String currentUsername = "";
+  String currentEmail = "";
   DateFormat dateFormat = DateFormat('dd MMMM yyyy');
   CustomColor customColor = CustomColor();
 
@@ -32,13 +32,13 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   void initState() {
     super.initState();
     fetchComments();
-    getCurrentUsername();
+    getCurrentEmail();
   }
 
-  Future<void> getCurrentUsername() async {
+  Future<void> getCurrentEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      currentUsername = prefs.getString('username') ?? "";
+      currentEmail = prefs.getString('email') ?? "";
     });
   }
 
@@ -51,7 +51,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     String? token = await getToken();
     var headers = {
       'Authorization': 'Bearer $token',
-      'Accept': 'application/josn',
+      'Accept': 'application/json',
     };
 
     String type = "comment";
@@ -271,7 +271,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                             itemBuilder: (context, index) {
                               final comment = comments[index];
                               final isCurrentUserComment =
-                                  comment.user.username == currentUsername;
+                                  comment.user.email == currentEmail;
                               final id = comment.id;
 
                               return Padding(
