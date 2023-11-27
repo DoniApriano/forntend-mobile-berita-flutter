@@ -3,10 +3,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/colors/custom_color.dart';
+import 'package:flutter_application_1/screen/bookmark_screen.dart';
 import 'package:flutter_application_1/screen/explore_screen.dart';
 import 'package:flutter_application_1/screen/news_follows_screen.dart';
 import 'package:flutter_application_1/screen/news_screen.dart';
-import 'package:flutter_application_1/screen/user_me_detail_screen.dart';
+import 'package:flutter_application_1/screen/profile_screen.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class MainPage extends StatefulWidget {
@@ -32,13 +33,8 @@ class _MainPageState extends State<MainPage> {
         child: NewsScreen(),
       ),
       ExploreScreen(),
-      Center(
-        child: Text(
-          "Halaman 3",
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-      Center(child: UserMeDetailScreen()),
+      BookmarkScreen(),
+      Center(child: ProfileScreen()),
     ];
 
     return MaterialApp(
@@ -61,20 +57,20 @@ class _MainPageState extends State<MainPage> {
             },
             tabs: [
               GButton(
-                icon: Icons.home,
-                text: 'Home',
+                icon: Icons.home_rounded,
+                text: 'Beranda',
               ),
               GButton(
-                icon: Icons.search,
-                text: 'Search',
+                icon: Icons.search_rounded,
+                text: 'Eksplorasi',
               ),
               GButton(
-                icon: Icons.heart_broken,
-                text: 'Likes',
+                icon: Icons.bookmark,
+                text: 'Penanda',
               ),
               GButton(
                 icon: Icons.person,
-                text: 'Profile',
+                text: 'Profil',
               )
             ],
           ),

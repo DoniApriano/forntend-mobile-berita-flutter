@@ -19,7 +19,7 @@ class _IntroState extends State<Intro> {
   @override
   Widget build(BuildContext context) {
     return IntroductionScreen(
-      globalBackgroundColor: customColor.light,
+      globalBackgroundColor: Colors.white,
       pages: [
         PageViewModel(
           title: "Selamat datang di Pawarta",
@@ -46,12 +46,18 @@ class _IntroState extends State<Intro> {
       ],
       done: const Text(
         "Masuk",
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
       ),
       showNextButton: true,
       showBackButton: true,
-      back: Text("<< Back"),
-      next: Text("Next >>"),
+      back: Text(
+        "<< Back",
+        style: TextStyle(color: Colors.black),
+      ),
+      next: Text(
+        "Next >>",
+        style: TextStyle(color: Colors.black),
+      ),
       onDone: () {
         Navigator.pushReplacement(
           context,

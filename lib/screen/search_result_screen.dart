@@ -147,6 +147,9 @@ class SearchResult extends SearchDelegate<String> {
                                                     children: [
                                                       Text(
                                                         news.title,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                         style: TextStyle(
                                                           fontSize: 20,
                                                           fontWeight:

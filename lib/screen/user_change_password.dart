@@ -3,8 +3,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/custom/custom.dart';
 import 'package:flutter_application_1/model/user_model.dart';
-import 'package:flutter_application_1/screen/user_me_detail_screen.dart';
+import 'package:flutter_application_1/screen/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,9 +18,11 @@ class UserChangePassword extends StatefulWidget {
 }
 
 class _UserChangePasswordState extends State<UserChangePassword> {
-  TextEditingController _oldPasswordController = TextEditingController();
-  TextEditingController _newPasswordController = TextEditingController();
-  TextEditingController _confNewPasswordController = TextEditingController();
+  final TextEditingController _oldPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confNewPasswordController =
+      TextEditingController();
+  Custom _custom = Custom();
 
   Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -51,9 +54,10 @@ class _UserChangePasswordState extends State<UserChangePassword> {
 
     if (response.statusCode == 200) {
       if (error['message'] == "Password lama anda tidak valid") {
-        showAlertDialog(context, "Gagal", "Kata sandi lama salah");
+        _custom.showAlertDialog(context, "Gagal", "Kata sandi lama salah");
       } else {
-        showAlertDialog(context, "Berhasil !!", "Berhasil mengubah kata sandi");
+        _custom.showAlertDialog(
+            context, "Berhasil !!", "Berhasil mengubah kata sandi");
       }
     }
     print(error);
@@ -75,7 +79,7 @@ class _UserChangePasswordState extends State<UserChangePassword> {
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.keyboard_arrow_left_rounded),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -193,7 +197,7 @@ class _UserChangePasswordState extends State<UserChangePassword> {
                 onPressed: () {
                   if (_confNewPasswordController.text !=
                       _newPasswordController.text) {
-                    showAlertDialog(context, "Gagal",
+                    _custom.showAlertDialog(context, "Gagal",
                         "Konfirmasi kata sandi tidak sama dengan kata sandi baru");
                   } else {
                     postChangePassword();
@@ -220,24 +224,4 @@ class _UserChangePasswordState extends State<UserChangePassword> {
       ),
     );
   }
-}
-
-void showAlertDialog(BuildContext context, String title, String content) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: <Widget>[
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Menutup dialog
-            },
-            child: Text('OK'),
-          ),
-        ],
-      );
-    },
-  );
 }

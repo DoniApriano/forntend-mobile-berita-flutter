@@ -23,21 +23,127 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   List<Tab> tabs = [];
   List<News> newsData = [];
+  List<News> newsTrenData = [];
   List<News> allNewsData = [];
   Map<int, List<News>> newsDataByCategory = {};
   List<Category> categories = [];
   DateFormat dateFormat = DateFormat('dd MMMM yyyy');
+  List<Tab> initialTabs = [];
+  Set<int> bookmarkedNewsIds = Set<int>();
+  String currentEmail = "";
 
   @override
   void initState() {
     super.initState();
     fetchCategoriesAndTabs();
     fetchAllNews();
+    fetchNewsTren();
+    fetchBookmarkedNewsIds();
+  }
+
+  Future<void> getCurrentEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currentEmail = prefs.getString('email') ?? "";
+    });
+  }
+
+  Future postBookmark(int newsId) async {
+    try {
+      String? token = await getToken();
+      var headers = {
+        'Authorization': 'Bearer $token',
+      };
+
+      var requestBody = {
+        'news_id': newsId.toString(),
+      };
+
+      var response = await http.post(
+        Uri.parse('http://10.0.2.2:8000/api/bookmarks'),
+        headers: headers,
+        body: requestBody,
+      );
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body.toString());
+      }
+    } on Exception catch (e) {
+      print("Error == ${e}");
+    }
+  }
+
+  Future fetchBookmarkedNewsIds() async {
+    try {
+      String? token = await getToken();
+      var headers = {
+        'Authorization': 'Bearer $token',
+      };
+
+      var response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/api/bookmarks'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body.toString());
+        setState(() {
+          bookmarkedNewsIds =
+              Set<int>.from(data['data'].map((item) => item['news_id']));
+        });
+      }
+    } on Exception catch (e) {
+      print("Error fetching bookmarked news IDs == $e");
+    }
+  }
+
+  Future unbookmarkNews(int newsId) async {
+    try {
+      String? token = await getToken();
+      var headers = {
+        'Authorization': 'Bearer $token',
+      };
+
+      var response = await http.delete(
+        Uri.parse('http://10.0.2.2:8000/api/bookmarks/${newsId}'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        bookmarkedNewsIds.remove(newsId);
+      }
+    } on Exception catch (e) {
+      print("Error unbookmarking news == $e");
+    }
+  }
+
+  Future<void> _refresh() async {
+    setState(() {
+      tabs.clear();
+      allNewsData.clear();
+      newsDataByCategory.clear();
+      newsTrenData.clear();
+
+      tabs.addAll(initialTabs);
+    });
+
+    await fetchAllNews();
+    await fetchCategoriesAndTabs();
+    await fetchNewsTren();
   }
 
   Future<void> fetchCategoriesAndTabs() async {
     await fetchCategories();
-    createTabs();
+    setState(() {
+      initialTabs.add(Tab(text: 'Trending'));
+      initialTabs.add(Tab(text: 'Semua Berita'));
+      initialTabs.addAll(categories.map((category) {
+        int categoryId = category.id;
+        fetchNewsByCategory(categoryId);
+        return Tab(text: category.name);
+      }).toList());
+
+      tabs = List.from(initialTabs);
+    });
   }
 
   Future fetchAllNews() async {
@@ -83,17 +189,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
     }
   }
 
-  void createTabs() {
-    tabs.add(Tab(text: 'Semua Berita'));
-
-    // Add tabs for each category
-    tabs.addAll(categories.map((category) {
-      int categoryId = category.id;
-      fetchNewsByCategory(categoryId);
-      return Tab(text: category.name);
-    }).toList());
-  }
-
   Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
@@ -124,6 +219,30 @@ class _ExploreScreenState extends State<ExploreScreen> {
     }
   }
 
+  Future fetchNewsTren() async {
+    try {
+      String? token = await getToken();
+      var headers = {'Authorization': 'Bearer $token'};
+      var response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/api/tren'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body.toString());
+        if (mounted) {
+          setState(() {
+            newsTrenData = List<News>.from(
+                data['data'].map((json) => News.fromJson(json)));
+          });
+        }
+      } else {
+        throw Exception("Failed to fetch news data");
+      }
+    } on Exception catch (e) {
+      print("Error == ${e.toString()}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -134,7 +253,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           appBar: AppBar(
             centerTitle: true,
             title: Text(
-              "Pawarta",
+              "Eksplorasi",
               style: TextStyle(
                 color: Colors.black,
               ),
@@ -161,274 +280,508 @@ class _ExploreScreenState extends State<ExploreScreen> {
           ),
           body: TabBarView(
             children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: allNewsData.length,
-                itemBuilder: (context, index) {
-                  final news = allNewsData[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 3,
-                                spreadRadius: 2,
-                                offset: Offset.fromDirection(-10, 5),
-                                color: const Color.fromARGB(255, 207, 207, 207),
+              RefreshIndicator(
+                onRefresh: _refresh,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: newsTrenData.length,
+                  itemBuilder: (context, index) {
+                    final news = newsTrenData[index];
+                    bool isBookmarked = bookmarkedNewsIds.contains(news.id);
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 3,
+                                      spreadRadius: 2,
+                                      offset: Offset.fromDirection(-10, 5),
+                                      color: const Color.fromARGB(
+                                          255, 207, 207, 207),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              NewsDetailScreen(news: news),
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 200,
+                                          height: 120,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                "http://10.0.2.2:8000/storage/newsImage/" +
+                                                    news.image,
+                                              ),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  news.title,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  news.newsContent,
+                                                  style: TextStyle(),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                UserDetailScreen(
+                                                                    user: news
+                                                                        .user),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: Text(
+                                                        news.user.username,
+                                                        style: TextStyle(
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 8,
+                                                    ),
+                                                    Text(
+                                                      timeago.format(
+                                                        DateTime.parse(news
+                                                            .created
+                                                            .substring(0, 19)),
+                                                        locale:
+                                                            'id', // Set the locale to Indonesian
+                                                      ),
+                                                      style: TextStyle(),
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 5,
+                                right: 5,
+                                child: PopupMenuButton(
+                                  itemBuilder: (BuildContext context) {
+                                    if (news.user.email == currentEmail) {
+                                      return [
+                                        PopupMenuItem(
+                                          value: 'option1',
+                                          child: Text('Option 1'),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 'option2',
+                                          child: Text('Option 2'),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 'option3',
+                                          child: Text('Option 3'),
+                                        ),
+                                      ];
+                                    } else {
+                                      return [
+                                        PopupMenuItem(
+                                          value: 'tandai',
+                                          child: Text(isBookmarked
+                                              ? "Batal tandai"
+                                              : "Tandai"),
+                                          onTap: () {
+                                            if (isBookmarked) {
+                                              unbookmarkNews(news.id);
+                                              setState(() {
+                                                bookmarkedNewsIds
+                                                    .remove(news.id);
+                                              });
+                                            } else {
+                                              postBookmark(news.id);
+                                              setState(() {
+                                                bookmarkedNewsIds.add(news.id);
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ];
+                                    }
+                                  },
+                                  icon: Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                    ),
+                                    child: Icon(
+                                      Icons.more_vert,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        NewsDetailScreen(news: news),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 200,
-                                    height: 120,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                          "http://10.0.2.2:8000/storage/newsImage/" +
-                                              news.image,
+                          SizedBox(
+                            height: 15,
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              RefreshIndicator(
+                onRefresh: _refresh,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: allNewsData.length,
+                  itemBuilder: (context, index) {
+                    final news = allNewsData[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 3,
+                                  spreadRadius: 2,
+                                  offset: Offset.fromDirection(-10, 5),
+                                  color:
+                                      const Color.fromARGB(255, 207, 207, 207),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          NewsDetailScreen(news: news),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 200,
+                                      height: 120,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                            "http://10.0.2.2:8000/storage/newsImage/" +
+                                                news.image,
+                                          ),
+                                          fit: BoxFit.cover,
                                         ),
-                                        fit: BoxFit.cover,
                                       ),
                                     ),
-                                  ),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            news.title,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              news.title,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black,
+                                              ),
                                             ),
-                                          ),
-                                          Text(
-                                            news.newsContent,
-                                            style: TextStyle(),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          UserDetailScreen(
-                                                              user: news.user),
+                                            Text(
+                                              news.newsContent,
+                                              style: TextStyle(),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            UserDetailScreen(
+                                                                user:
+                                                                    news.user),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Text(
+                                                    news.user.username,
+                                                    style: TextStyle(
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Colors.grey,
                                                     ),
-                                                  );
-                                                },
-                                                child: Text(
-                                                  news.user.username,
-                                                  style: TextStyle(
-                                                    fontStyle: FontStyle.italic,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: Colors.grey,
                                                   ),
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              Text(
-                                                timeago.format(
-                                                  DateTime.parse(news.created
-                                                      .substring(0, 19)),
-                                                  locale:
-                                                      'id', // Set the locale to Indonesian
+                                                SizedBox(
+                                                  height: 8,
                                                 ),
-                                                style: TextStyle(),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                                Text(
+                                                  timeago.format(
+                                                    DateTime.parse(news.created
+                                                        .substring(0, 19)),
+                                                    locale:
+                                                        'id', // Set the locale to Indonesian
+                                                  ),
+                                                  style: TextStyle(),
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        )
-                      ],
-                    ),
-                  );
-                },
+                          SizedBox(
+                            height: 15,
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
               ...categories.map(
                 (category) {
                   int categoryId = category.id;
                   List<News>? categoryNews = newsDataByCategory[categoryId];
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: categoryNews?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final news = categoryNews![index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    blurRadius: 3,
-                                    spreadRadius: 2,
-                                    offset: Offset.fromDirection(-10, 5),
-                                    color: const Color.fromARGB(
-                                        255, 207, 207, 207),
-                                  ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            NewsDetailScreen(news: news),
-                                      ),
-                                    );
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 200,
-                                        height: 120,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          image: DecorationImage(
-                                            image: NetworkImage(
-                                              "http://10.0.2.2:8000/storage/newsImage/" +
-                                                  news.image,
-                                            ),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                news.title,
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                              Text(
-                                                news.newsContent,
-                                                style: TextStyle(),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              UserDetailScreen(
-                                                                  user: news
-                                                                      .user),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Text(
-                                                      news.user.username,
-                                                      style: TextStyle(
-                                                        fontStyle:
-                                                            FontStyle.italic,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 8,
-                                                  ),
-                                                  Text(
-                                                    timeago.format(
-                                                      DateTime.parse(news
-                                                          .created
-                                                          .substring(0, 19)),
-                                                      locale:
-                                                          'id', // Set the locale to Indonesian
-                                                    ),
-                                                    style: TextStyle(),
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      await fetchNewsByCategory(categoryId);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: categoryNews?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final news = categoryNews![index];
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        blurRadius: 3,
+                                        spreadRadius: 2,
+                                        offset: Offset.fromDirection(-10, 5),
+                                        color: const Color.fromARGB(
+                                            255, 207, 207, 207),
                                       ),
                                     ],
                                   ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                NewsDetailScreen(news: news),
+                                          ),
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 200,
+                                            height: 120,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                  "http://10.0.2.2:8000/storage/newsImage/" +
+                                                      news.image,
+                                                ),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          Flexible(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    news.title,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    news.newsContent,
+                                                    style: TextStyle(),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  UserDetailScreen(
+                                                                      user: news
+                                                                          .user),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Text(
+                                                          news.user.username,
+                                                          style: TextStyle(
+                                                            fontStyle: FontStyle
+                                                                .italic,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 8,
+                                                      ),
+                                                      Text(
+                                                        timeago.format(
+                                                          DateTime.parse(news
+                                                              .created
+                                                              .substring(
+                                                                  0, 19)),
+                                                          locale:
+                                                              'id', // Set the locale to Indonesian
+                                                        ),
+                                                        style: TextStyle(),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                SizedBox(
+                                  height: 15,
+                                )
+                              ],
                             ),
-                            SizedBox(
-                              height: 15,
-                            )
-                          ],
-                        ),
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ),
                   );
                 },
               ).toList(),

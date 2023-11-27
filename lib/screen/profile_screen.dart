@@ -3,20 +3,24 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/user_model.dart';
+import 'package:flutter_application_1/pages/login_page.dart';
+import 'package:flutter_application_1/screen/news_create_screen.dart';
+import 'package:flutter_application_1/screen/notifications_screen.dart';
+import 'package:flutter_application_1/screen/submission_screen.dart';
 import 'package:flutter_application_1/screen/user_change_password.dart';
 import 'package:flutter_application_1/screen/user_detail_screen.dart';
-import 'package:flutter_application_1/screen/user_update_profile_screeen.dart';
+import 'package:flutter_application_1/screen/user_change_profile_screeen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class UserMeDetailScreen extends StatefulWidget {
-  const UserMeDetailScreen({Key? key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  _UserMeDetailScreenState createState() => _UserMeDetailScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   String? username = "";
   String? profilePicture = "";
   String? email = "";
@@ -32,7 +36,7 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
-    await prefs.remove('username');
+    await prefs.remove('email');
   }
 
   Future getUser() async {
@@ -78,7 +82,14 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
           elevation: 0,
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NotificationsScreen(),
+                  ),
+                );
+              },
               icon: Icon(
                 Icons.notifications_outlined,
                 color: Colors.black,
@@ -216,7 +227,7 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    UserUpdateProfileScreeen(user: user),
+                                    UserChangeProfileScreeen(user: user),
                               ),
                             );
                           },
@@ -274,6 +285,146 @@ class _UserMeDetailScreenState extends State<UserMeDetailScreen> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   "Ubah Kata Sandi",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_right_rounded,
+                                color: Colors.white,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NewsCreateScreen(),
+                              ),
+                            );
+                          },
+                          style: ButtonStyle(
+                            shadowColor: MaterialStatePropertyAll(Colors.grey),
+                            minimumSize: MaterialStateProperty.all(
+                                Size(double.infinity, 50)),
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.black),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Buat Artikel",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_right_rounded,
+                                color: Colors.white,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SubmissionScreen(),
+                              ),
+                            );
+                          },
+                          style: ButtonStyle(
+                            shadowColor: MaterialStatePropertyAll(Colors.grey),
+                            minimumSize: MaterialStateProperty.all(
+                                Size(double.infinity, 50)),
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.black),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Ajukan Permintaan",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_right_rounded,
+                                color: Colors.white,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Logout"),
+                                  content: Text("Anda yakin ingin logout?"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Batal"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        logout();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => LoginPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text("Logout"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          style: ButtonStyle(
+                            shadowColor: MaterialStatePropertyAll(Colors.grey),
+                            minimumSize: MaterialStateProperty.all(
+                                Size(double.infinity, 50)),
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.black),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Logout",
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),

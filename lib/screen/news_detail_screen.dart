@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, prefer_final_fields, library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, unnecessary_brace_in_string_interps, prefer_interpolation_to_compose_strings, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, avoid_print, prefer_final_fields, library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, unnecessary_brace_in_string_interps, prefer_interpolation_to_compose_strings, avoid_unnecessary_containers, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/colors/custom_color.dart';
+import 'package:flutter_application_1/custom/custom.dart';
 import 'package:flutter_application_1/model/comment_model.dart';
 import 'package:flutter_application_1/model/news_model.dart';
 import 'package:flutter_application_1/screen/user_detail_screen.dart';
@@ -27,12 +28,14 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   String currentEmail = "";
   DateFormat dateFormat = DateFormat('dd MMMM yyyy');
   CustomColor customColor = CustomColor();
+  Custom _custom = Custom();
 
   @override
   void initState() {
     super.initState();
     fetchComments();
     getCurrentEmail();
+    postTren(widget.news.id);
   }
 
   Future<void> getCurrentEmail() async {
@@ -54,8 +57,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
       'Accept': 'application/json',
     };
 
-    String type = "comment";
-
     var requestBody = {
       'reported_user_id': idReported.toString(),
       'comment_id': commentId.toString(),
@@ -67,10 +68,11 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
       body: requestBody,
     );
 
+    var data = json.decode(response.body);
     if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      print(data['data']);
+      _custom.showAlertDialog(context, "Berhasil", "Berhasil melapor");
     } else {
+      print(data);
       print("status code = ${response.statusCode}");
     }
   }
@@ -146,6 +148,24 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     }
   }
 
+  Future postTren(var newsId) async {
+    String? token = await getToken();
+    var headers = {
+      'Authorization': 'Bearer $token',
+    };
+
+    var response = await http.post(
+      Uri.parse('http://10.0.2.2:8000/api/tren/${newsId}'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      print("berhasil");
+    } else {
+      print('Gagal menghapus komentar. Status Code: ${response.body}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,7 +176,15 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
             pinned: true,
             backgroundColor: Colors.transparent,
             elevation: 0,
-            iconTheme: IconThemeData(color: Colors.black),
+            iconTheme: IconThemeData(
+              color: Colors.black,
+            ),
+            leading: IconButton(
+              icon: Icon(Icons.keyboard_arrow_left_rounded),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
           ),
           SliverToBoxAdapter(
             child: SingleChildScrollView(
@@ -184,13 +212,25 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              widget.news.user.username,
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.grey,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserDetailScreen(
+                                      user: widget.news.user,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                widget.news.user.username,
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                             Text(
@@ -352,8 +392,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                           builder: (context) {
                                             return AlertDialog(
                                               title: Text("Pesan"),
-                                              content: Text(
-                                                  "Anda menekan lama komentar yang berbeda."),
+                                              content: Text("Berikan laporan"),
                                               actions: <Widget>[
                                                 TextButton(
                                                   child: Text("Report"),
@@ -364,7 +403,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                                       builder: (context) {
                                                         return AlertDialog(
                                                           title: Text(
-                                                              "Report Komentar ${comment.user.id}"),
+                                                              "Report Komentar"),
                                                           content: Column(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -399,7 +438,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                                                           .id);
                                                                   Navigator.of(
                                                                           context)
-                                                                      .pop(); // Tutup AlertDialog kedua
+                                                                      .pop(); 
                                                                 },
                                                               ),
                                                             ],
@@ -420,36 +459,54 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                               );
                             },
                           ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: _commentController,
-                                  decoration: InputDecoration(
-                                    hintText: 'Ketik komentar Anda...',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _commentController,
+                                decoration: InputDecoration(
+                                  hintText: 'Ketik komentar Anda...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  contentPadding: EdgeInsets.all(10.0),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  sendComment();
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(
+                                    Colors.black,
+                                  ),
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          10), // Sesuaikan radius sesuai kebutuhan
                                     ),
-                                    contentPadding: EdgeInsets.all(10.0),
+                                  ),
+                                  side: MaterialStatePropertyAll(
+                                    BorderSide.none,
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    // Implementasi pengiriman komentar ke API
-                                    sendComment();
-                                  },
-                                  style: ButtonStyle(),
-                                  icon: Icon(Icons.send),
-                                  label: Text(''),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Icon(
+                                      Icons.send_rounded,
+                                      color: Colors.white,
+                                    )
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         )
                       ],
                     ),

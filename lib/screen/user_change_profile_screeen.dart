@@ -4,25 +4,27 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/custom/custom.dart';
 import 'package:flutter_application_1/model/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class UserUpdateProfileScreeen extends StatefulWidget {
+class UserChangeProfileScreeen extends StatefulWidget {
   final User user;
-  const UserUpdateProfileScreeen({Key? key, required this.user})
+  const UserChangeProfileScreeen({Key? key, required this.user})
       : super(key: key);
 
   @override
-  _UserUpdateProfileScreeenState createState() =>
-      _UserUpdateProfileScreeenState();
+  _UserChangeProfileScreeenState createState() =>
+      _UserChangeProfileScreeenState();
 }
 
-class _UserUpdateProfileScreeenState extends State<UserUpdateProfileScreeen> {
+class _UserChangeProfileScreeenState extends State<UserChangeProfileScreeen> {
   TextEditingController _usernameController = TextEditingController();
   File? image;
   String? profilePictureUrl;
+  Custom _custom = Custom();
 
   Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -33,37 +35,31 @@ class _UserUpdateProfileScreeenState extends State<UserUpdateProfileScreeen> {
     final username = _usernameController.text;
     String? token = await getToken();
 
-    if (image == null) {
-      showAlertDialog(
-          context, "Gagal Mendaftar", "Anda perlu memilih gambar profil.");
-      return;
-    }
-
     final Map<String, dynamic> data = {
       'username': username,
     };
 
-    final jsonData = json.encode(data); // Mengonversi data ke JSON
-
-    var stream = new http.ByteStream(image!.openRead());
-    stream.cast();
+    final jsonData = json.encode(data);
 
     var request = http.MultipartRequest(
       'POST',
       Uri.parse('http://10.0.2.2:8000/api/user/update'),
     );
 
-    // Tambahkan header 'Content-Type' untuk JSON
-    request.headers['Accept'] = 'application/json';
-    request.headers['Authorization'] = 'Bearer ${token}';
-    request.fields['username'] = username;
-
-    request.fields['data'] = jsonData;
-
-    // Tambahkan gambar ke permintaan
-    var imageField =
-        await http.MultipartFile.fromPath('profile_picture', image!.path);
-    request.files.add(imageField);
+    // var stream = new http.ByteStream(image!.openRead());
+    // stream.cast();
+    if (image == null) {
+      request.headers['Accept'] = 'application/json';
+      request.headers['Authorization'] = 'Bearer ${token}';
+      request.fields['username'] = username;
+    } else {
+      request.headers['Accept'] = 'application/json';
+      request.headers['Authorization'] = 'Bearer ${token}';
+      request.fields['username'] = username;
+      var imageField =
+          await http.MultipartFile.fromPath('profile_picture', image!.path);
+      request.files.add(imageField);
+    }
 
     try {
       final response = await request.send();
@@ -73,10 +69,12 @@ class _UserUpdateProfileScreeenState extends State<UserUpdateProfileScreeen> {
       print(data);
 
       if (message.contains('Berhasil')) {
-        showAlertDialog(context, 'Berhasil', "Berhasil Update");
+        _custom.showAlertDialog(context, 'Berhasil', "Berhasil Update");
       } else if (message.contains('validation.square_image')) {
-        showAlertDialog(
+        _custom.showAlertDialog(
             context, 'Gagal', "Foto Profil yang digunakan harus 1:1");
+      } else {
+        print(data);
       }
     } catch (e) {
       print('Terjadi kesalahan: $e');
@@ -94,26 +92,6 @@ class _UserUpdateProfileScreeenState extends State<UserUpdateProfileScreeen> {
         profilePictureUrl = null;
       });
     }
-  }
-
-  void showAlertDialog(BuildContext context, String title, String content) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Menutup dialog
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -141,7 +119,7 @@ class _UserUpdateProfileScreeenState extends State<UserUpdateProfileScreeen> {
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.keyboard_arrow_left_rounded),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -152,19 +130,20 @@ class _UserUpdateProfileScreeenState extends State<UserUpdateProfileScreeen> {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: GestureDetector(
-                  onTap: _pickImage,
-                  child: image == null
-                      ? Image.network(
-                          profilePictureUrl!,
-                          width: 200,
-                          height: 200,
-                        )
-                      : Image.file(
-                          File(image!.path),
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        )),
+                onTap: _pickImage,
+                child: image == null
+                    ? Image.network(
+                        profilePictureUrl!,
+                        width: 200,
+                        height: 200,
+                      )
+                    : Image.file(
+                        File(image!.path),
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -199,7 +178,10 @@ class _UserUpdateProfileScreeenState extends State<UserUpdateProfileScreeen> {
                       MaterialStateProperty.all(Size(double.infinity, 50)),
                   backgroundColor: MaterialStatePropertyAll(Colors.black),
                 ),
-                child: Text("Konfirmasi"),
+                child: Text(
+                  "Konfirmasi",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],

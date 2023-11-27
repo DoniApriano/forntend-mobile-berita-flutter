@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 30,
-                          color: customColor.dark,
+                          color: Colors.black,
                         ),
                       ),
                       SizedBox(
@@ -138,9 +138,9 @@ class _LoginPageState extends State<LoginPage> {
                                     border: InputBorder.none,
                                     label: Text("Email"),
                                     labelStyle: TextStyle(
-                                      color: customColor.purple,
+                                      color: Colors.black,
                                     ),
-                                    prefixIconColor: customColor.purple,
+                                    prefixIconColor: Colors.black,
                                     prefixIcon: Icon(Icons.person_outline),
                                   ),
                                 ),
@@ -171,9 +171,9 @@ class _LoginPageState extends State<LoginPage> {
                                           label: Text("Kata Sandi"),
                                           border: InputBorder.none,
                                           labelStyle: TextStyle(
-                                            color: customColor.purple,
+                                            color: Colors.black,
                                           ),
-                                          prefixIconColor: customColor.purple,
+                                          prefixIconColor: Colors.black,
                                           prefixIcon:
                                               Icon(Icons.lock_clock_outlined),
                                         ),
@@ -194,16 +194,18 @@ class _LoginPageState extends State<LoginPage> {
                                 style: ButtonStyle(
                                     elevation: MaterialStatePropertyAll(10),
                                     backgroundColor: MaterialStateProperty.all(
-                                        customColor.purple)),
+                                        Colors.black)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.login_outlined),
+                                    Icon(Icons.login_outlined,
+                                        color: Colors.white),
                                     Padding(
                                       padding: const EdgeInsets.all(10.0),
                                       child: Text(
                                         "Masuk",
-                                        style: TextStyle(fontSize: 20),
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.white),
                                       ),
                                     ),
                                   ],
@@ -217,7 +219,10 @@ class _LoginPageState extends State<LoginPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text("Belum punya akun?"),
+                                  Text(
+                                    "Belum punya akun?",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
                                   GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -231,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                                       " Register",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        color: customColor.purple,
+                                        color: Colors.grey,
                                       ),
                                     ),
                                   )

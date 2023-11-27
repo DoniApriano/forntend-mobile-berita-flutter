@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/colors/custom_color.dart';
+import 'package:flutter_application_1/custom/custom.dart';
 import 'package:flutter_application_1/pages/login_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -22,6 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
   File? image;
 
   CustomColor customColor = CustomColor();
+  Custom _custom = Custom();
 
   Future<void> registerUser() async {
     final username = usernameController.text;
@@ -30,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
     final confirmPassword = confirmPasswordController.text;
 
     if (image == null) {
-      showAlertDialog(
+      _custom.showAlertDialog(
           context, "Gagal Mendaftar", "Anda perlu memilih gambar profil.");
       return;
     }
@@ -40,10 +42,9 @@ class _RegisterPageState extends State<RegisterPage> {
       'email': email,
       'password': password,
       'password_confirmation': confirmPassword,
-      // Tambahkan data lain sesuai kebutuhan
     };
 
-    final jsonData = json.encode(data); // Mengonversi data ke JSON
+    final jsonData = json.encode(data);
 
     var stream = new http.ByteStream(image!.openRead());
     stream.cast();
@@ -53,17 +54,14 @@ class _RegisterPageState extends State<RegisterPage> {
       Uri.parse('http://10.0.2.2:8000/api/auth/register'),
     );
 
-    // Tambahkan header 'Content-Type' untuk JSON
     request.headers['Accept'] = 'application/json';
     request.fields['username'] = username;
     request.fields['password'] = password;
     request.fields['email'] = email;
     request.fields['password_confirmation'] = confirmPassword;
 
-    // Tambahkan data JSON sebagai bagian dari permintaan
     request.fields['data'] = jsonData;
 
-    // Tambahkan gambar ke permintaan
     var imageField =
         await http.MultipartFile.fromPath('profile_picture', image!.path);
     request.files.add(imageField);
@@ -83,14 +81,17 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         );
       } else if (message.contains('The email field is required.')) {
-        showAlertDialog(context, 'Gagal Mendaftar', "Harap isi email anda");
+        _custom.showAlertDialog(
+            context, 'Gagal Mendaftar', "Harap isi email anda");
       } else if (message.contains('The email has already been taken.')) {
-        showAlertDialog(
+        _custom.showAlertDialog(
             context, "Gagal Mendaftar", "Email anda sudah digunakan");
       } else if (message.contains("The password field is required.")) {
-        showAlertDialog(context, "Gagal Mendaftar", "Harap isi password anda");
+        _custom.showAlertDialog(
+            context, "Gagal Mendaftar", "Harap isi password anda");
       } else if (password != confirmPassword) {
-        showAlertDialog(context, "Gagal Mendaftar", "Password tidak cocok");
+        _custom.showAlertDialog(
+            context, "Gagal Mendaftar", "Password tidak cocok");
       }
     } catch (e) {
       // Tangani kesalahan selain dari respons yang tidak valid.
@@ -124,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 30,
-                  color: customColor.dark,
+                  color: Colors.black,
                 ),
               ),
               Padding(
@@ -141,17 +142,17 @@ class _RegisterPageState extends State<RegisterPage> {
                             ? Container(
                                 width: 200,
                                 height: 200,
-                                color: customColor.purple,
+                                color: Colors.black,
                                 child: Icon(
-                                  Icons.add_a_photo,
+                                  Icons.person,
                                   color: Colors.white,
                                   size: 50,
                                 ),
                               )
                             : Image.file(
                                 File(image!.path),
-                                width: 100,
-                                height: 100,
+                                width: 200,
+                                height: 200,
                                 fit: BoxFit.cover,
                               ),
                       ),
@@ -176,9 +177,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             label: Text("Username"),
                             border: InputBorder.none,
                             labelStyle: TextStyle(
-                              color: customColor.purple,
+                              color: Colors.black,
                             ),
-                            prefixIconColor: customColor.purple,
+                            prefixIconColor: Colors.black,
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                         ),
@@ -204,9 +205,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             label: Text("Email"),
                             border: InputBorder.none,
                             labelStyle: TextStyle(
-                              color: customColor.purple,
+                              color: Colors.black,
                             ),
-                            prefixIconColor: customColor.purple,
+                            prefixIconColor: Colors.black,
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                         ),
@@ -234,9 +235,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 labelStyle: TextStyle(
-                                  color: customColor.purple,
+                                  color: Colors.black,
                                 ),
-                                prefixIconColor: customColor.purple,
+                                prefixIconColor: Colors.black,
                                 label: Text("Kata sandi"),
                                 prefixIcon: Icon(Icons.lock_clock_outlined),
                               ),
@@ -267,9 +268,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 labelStyle: TextStyle(
-                                  color: customColor.purple,
+                                  color: Colors.black,
                                 ),
-                                prefixIconColor: customColor.purple,
+                                prefixIconColor: Colors.black,
                                 label: Text("Konfirmasi Kata Sandi"),
                                 prefixIcon: Icon(Icons.lock_clock_outlined),
                               ),
@@ -288,17 +289,21 @@ class _RegisterPageState extends State<RegisterPage> {
                         style: ButtonStyle(
                           elevation: MaterialStatePropertyAll(10),
                           backgroundColor:
-                              MaterialStateProperty.all(customColor.purple),
+                              MaterialStateProperty.all(Colors.black),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.login_outlined),
+                            Icon(
+                              Icons.login_outlined,
+                              color: Colors.white,
+                            ),
                             Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Text(
                                 "Daftar",
-                                style: TextStyle(fontSize: 20),
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white),
                               ),
                             ),
                           ],
@@ -317,24 +322,4 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
-}
-
-void showAlertDialog(BuildContext context, String title, String content) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: <Widget>[
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Menutup dialog
-            },
-            child: Text('OK'),
-          ),
-        ],
-      );
-    },
-  );
 }
