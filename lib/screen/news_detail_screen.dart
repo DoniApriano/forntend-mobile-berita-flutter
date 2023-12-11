@@ -93,8 +93,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       setState(() {
-        comments = List<Comment>.from(
-            data['data'].map((json) => Comment.fromJson(json)));
+        comments = List<Comment>.from(data['data'].map((json) => Comment.fromJson(json)));
         isLoading = false;
       });
     } else {
@@ -192,8 +191,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -234,8 +232,8 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                               ),
                             ),
                             Text(
-                              dateFormat.format(DateTime.parse(
-                                  widget.news.created.substring(0, 10))),
+                              dateFormat
+                                  .format(DateTime.parse(widget.news.created.substring(0, 10))),
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w400,
@@ -260,8 +258,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
                               image: NetworkImage(
-                                "http://10.0.2.2:8000/storage/newsImage/" +
-                                    widget.news.image,
+                                "http://10.0.2.2:8000/storage/newsImage/" + widget.news.image,
                               ),
                               fit: BoxFit.cover,
                             ),
@@ -310,8 +307,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
                               final comment = comments[index];
-                              final isCurrentUserComment =
-                                  comment.user.email == currentEmail;
+                              final isCurrentUserComment = comment.user.email == currentEmail;
                               final id = comment.id;
 
                               return Padding(
@@ -325,8 +321,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                         blurRadius: 3,
                                         spreadRadius: 2,
                                         offset: Offset.fromDirection(-10, 5),
-                                        color: const Color.fromARGB(
-                                            255, 207, 207, 207),
+                                        color: const Color.fromARGB(255, 207, 207, 207),
                                       ),
                                     ],
                                   ),
@@ -337,8 +332,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                UserDetailScreen(
-                                                    user: comment.user),
+                                                UserDetailScreen(user: comment.user),
                                           ),
                                         );
                                       },
@@ -366,8 +360,8 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                           builder: (context) {
                                             return AlertDialog(
                                               title: Text("Hapus Komentar"),
-                                              content: Text(
-                                                  "Apakah anda ingin menghapus komentar?"),
+                                              content:
+                                                  Text("Apakah anda ingin menghapus komentar?"),
                                               actions: <Widget>[
                                                 TextButton(
                                                   child: Text("Batal"),
@@ -402,43 +396,24 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                                       context: context,
                                                       builder: (context) {
                                                         return AlertDialog(
-                                                          title: Text(
-                                                              "Report Komentar"),
+                                                          title: Text("Report Komentar"),
                                                           content: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
+                                                            mainAxisSize: MainAxisSize.min,
                                                             children: <Widget>[
                                                               ListTile(
-                                                                title: Text(
-                                                                    "Spam"),
+                                                                title: Text("Spam"),
                                                                 onTap: () {
-                                                                  postReport(
-                                                                      comment
-                                                                          .user
-                                                                          .id,
-                                                                      "Spam",
-                                                                      comment
-                                                                          .id);
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
+                                                                  postReport(comment.user.id,
+                                                                      "Spam", comment.id);
+                                                                  Navigator.of(context).pop();
                                                                 },
                                                               ),
                                                               ListTile(
-                                                                title: Text(
-                                                                    "Abuse"),
+                                                                title: Text("Abuse"),
                                                                 onTap: () {
-                                                                  postReport(
-                                                                      comment
-                                                                          .user
-                                                                          .id,
-                                                                      "Abuse",
-                                                                      comment
-                                                                          .id);
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop(); 
+                                                                  postReport(comment.user.id,
+                                                                      "Abuse", comment.id);
+                                                                  Navigator.of(context).pop();
                                                                 },
                                                               ),
                                                             ],
@@ -483,8 +458,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                   backgroundColor: MaterialStatePropertyAll(
                                     Colors.black,
                                   ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
                                           10), // Sesuaikan radius sesuai kebutuhan
@@ -495,8 +469,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                   ),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Icon(
                                       Icons.send_rounded,

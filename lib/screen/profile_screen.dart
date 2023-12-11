@@ -24,7 +24,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? username = "";
   String? profilePicture = "";
   String? email = "";
-  bool isHovered = false;
 
   User user = User(id: 0, username: "", profilePicture: "", email: "");
 
